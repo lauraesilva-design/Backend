@@ -11,3 +11,19 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model Alunos{
+  id Int @id @unique @default(autoincrement())
+  nome String 
+  idade Int
+  cpf String @unique 
+  genero String
+  email String @unique
+}
+
+model Cursos{
+  id Int @id @unique @default(autoincrement())
+  nome String @unique
+  descricao String
+  duracao Int
+}

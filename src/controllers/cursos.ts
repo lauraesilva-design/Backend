@@ -1,0 +1,94 @@
+import { Request, Response } from "express";
+
+import {prisma} from "../../config/prisma";
+import { handleErrors } from "../helpers/handleErrors";
+
+export default ({
+    create: async(request: Request,response: Response) => {
+        try{
+             const {nome, descricao, duracao} = request.body;
+
+        if(!nome || !descricao|| !duracao){
+           return response.status(400).json("Dados incompletos");
+
+        }
+       
+        
+        const curso = await prisma.cursos.create({
+            data:{
+                nome,
+                descricao,
+                duracao,
+
+            },
+        });
+        return response.status(201).json(curso);
+       } catch (e) {
+        return handleErrors(e, response);
+       }
+       
+        
+   },
+    list: async (request: Request,response: Response) => {
+        try{
+
+       const curso = await prisma.cursos.findMany();
+      return response.status(200).json(curso);
+        }catch (e){
+            return handleErrors(e, response);
+        }
+    },
+    getByld: async (request: Request,response: Response) => {
+        try{
+            const {id} = request.params;
+  const curso = await prisma.cursos.findUnique({
+    where:{
+        id: Number(id)
+    }
+  })
+
+if(!curso){
+    return response.status(404).json("Curso não encontrado");
+}
+
+  return response.status(200).json(curso);
+  }catch (e){
+    return handleErrors(e, response);
+  }
+    
+    },
+    update: async (request: Request,response: Response) => {
+        try{
+        const {id} = request.params;
+        const {nome, descricao, duracao} = request.body;
+
+        const curso= await prisma.cursos.update({
+          where:{
+            id: Number(id)
+          },
+          data:{
+            nome,
+            descricao,
+            duracao
+          },
+        });
+        return response.status(200).json(curso);
+        } catch (e){
+         return handleErrors(e, response);
+        }
+    },
+     delete: async (request: Request,response: Response) => {
+        try{
+        const {id} = request.params;
+        const curso = await prisma.cursos.delete({
+            where:{
+                id: Number(id),
+            },
+        });
+        return response.status(200).json(curso);
+        }catch (e){
+        return handleErrors(e, response);
+        }
+     },
+});
+
